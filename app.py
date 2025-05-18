@@ -31,4 +31,6 @@ def remove_bg():
     return {'url': f'/static/removed/no-bg-{filename_wo_ext}.png'}
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # default to 5000 for local
+    app.run(debug=True, host='0.0.0.0', port=port)
+
