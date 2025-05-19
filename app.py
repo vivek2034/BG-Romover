@@ -14,21 +14,28 @@ def index():
 @app.route('/remove-bg', methods=['POST'])
 def remove_bg():
     if 'image' not in request.files:
+        print("No image found in request")
         return 'No file uploaded.', 400
 
     file = request.files['image']
     input_path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(input_path)
 
-    # Remove background
-    with Image.open(input_path) as img:
-        output = remove(img)
-        filename_wo_ext = os.path.splitext(file.filename)[0]
-        output_path = os.path.join(UPLOAD_FOLDER, f'no-bg-{filename_wo_ext}.png')
-        output.save(output_path, format='PNG')
+    try:
+        with Image.open(input_path) as img:
+            print(f"Image opened: {input_path}")
+            output = remove(img)
+            filename_wo_ext = os.path.splitext(file.filename)[0]
+            output_filename = f'no-bg-{filename_wo_ext}.png'
+            output_path = os.path.join(UPLOAD_FOLDER, output_filename)
+            output.save(output_path, format='PNG')
+            print(f"Output saved to: {output_path}")
 
+        return {'url': f'/static/removed/{output_filename}'}
 
-    return {'url': f'/static/removed/no-bg-{filename_wo_ext}.png'}
+    except Exception as e:
+        print(f"❌ Error during background removal: {str(e)}")
+        return {'error': 'Failed to remove background.'}, 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # default to 5000 for local
