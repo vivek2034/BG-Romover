@@ -9,7 +9,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
 def index():
-    return render_templates('index.html')
+    return render_template('index.html')
 
 @app.route('/remove-bg', methods=['POST'])
 def remove_bg():
